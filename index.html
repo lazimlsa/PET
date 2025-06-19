@@ -1,0 +1,310 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Loja online LSA Pet Shopping, oferecendo rações, produtos de higiene e acessórios para pets.">
+  <meta name="keywords" content="pet shop, rações, higiene pet, acessórios para pets, LSA Pet Shopping">
+  <title>LSA Pet Shopping</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Poppins', sans-serif; background: #f5f7fa; color: #333; line-height: 1.6; }
+    header { background: #27ae60; color: #fff; text-align: center; padding: 1em; position: relative; }
+    .menu-toggle { display: none; font-size: 1.5em; background: none; border: none; color: #fff; cursor: pointer; position: absolute; left: 10px; top: 50%; transform: translateY(-50%); }
+    .cart-icon { position: fixed; bottom: 20px; right: 20px; background: #27ae60; color: #fff; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.5em; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; position: relative; transition: transform 0.3s ease; }
+    .cart-icon:hover { background: #219653; transform: scale(1.1); }
+    .cart-count { position: absolute; top: -5px; right: -5px; background: #fff; color: #27ae60; border-radius: 50%; width: 20px; height: 20px; display: flex; align-items: center; justify-content: center; font-size: 0.9em; font-weight: 600; }
+    .sidebar { position: fixed; left: -250px; top: 0; height: 100%; width: 250px; background: #2c3e50; padding-top: 20px; transition: left 0.3s; z-index: 1000; }
+    .sidebar.active { left: 0; }
+    .sidebar ul { list-style: none; }
+    .sidebar ul li { padding: 15px 10px; }
+    .sidebar ul li a { color: #fff; text-decoration: none; display: flex; align-items: center; }
+    .sidebar ul li a i { margin-right: 10px; }
+    .sidebar ul li a span { display: inline; }
+    .sidebar ul li a:hover { color: #27ae60; }
+    .main-content { margin-left: 0; padding: 20px; transition: margin-left 0.3s; }
+    .main-content.shifted { margin-left: 250px; }
+    .intro { text-align: center; padding: 1em 0; }
+    .intro p { font-size: 1.2em; color: #2c3e50; }
+    .section { padding: 1.5em 0; display: block; }
+    .section.hidden { display: none; }
+    .section h2 { color: #e67e22; margin-bottom: 0.8em; font-size: 1.5em; }
+    .products-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1em; padding: 0 0.5em; }
+    .product-card { background: #fff; border-radius: 8px; padding: 1em; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .product-card:hover { transform: translateY(-5px); }
+    .product-card img { max-width: 100%; height: auto; margin-bottom: 0.5em; }
+    .product-card p { margin: 0.3em 0; font-size: 0.9em; }
+    .product-card strong { color: #e67e22; font-size: 1em; }
+    .add-to-cart { background: #27ae60; color: #fff; border: none; padding: 0.5em 1em; border-radius: 4px; cursor: pointer; font-size: 0.9em; transition: background 0.3s; }
+    .add-to-cart:hover { background: #219653; }
+    #cart-modal { display: none; position: fixed; bottom: 90px; right: 20px; background: #fff; padding: 1em; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); max-width: 250px; width: 100%; max-height: 400px; overflow-y: auto; transition: opacity 0.3s ease; opacity: 0; z-index: 1001; }
+    #cart-modal.active { display: block; opacity: 1; }
+    #cart-items { margin-bottom: 0.5em; }
+    .cart-item { display: flex; justify-content: space-between; align-items: center; margin: 0.3em 0; color: #2c3e50; }
+    .remove-from-cart { background: #e74c3c; color: #fff; border: none; padding: 0.2em 0.5em; border-radius: 3px; cursor: pointer; font-size: 0.8em; transition: background 0.3s; }
+    .remove-from-cart:hover { background: #c0392b; }
+    #payment-method { width: 100%; padding: 0.5em; margin-bottom: 0.5em; border-radius: 3px; border: 1px solid #ccc; }
+    #checkout-btn { background: #27ae60; color: #fff; border: none; padding: 0.5em; border-radius: 4px; width: 100%; cursor: pointer; font-size: 0.9em; transition: background 0.3s; }
+    #checkout-btn:hover { background: #219653; }
+    footer { background: #27ae60; color: #fff; text-align: center; padding: 0.5em; margin-top: 1em; font-size: 0.9em; }
+    @media (max-width: 768px) {
+      .menu-toggle { display: block; }
+      .sidebar { left: -250px; }
+      .sidebar.active { left: 0; }
+      .main-content.shifted { margin-left: 0; }
+      .products-grid { grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); }
+      #cart-modal { max-width: 200px; bottom: 70px; right: 10px; }
+      .cart-icon { bottom: 10px; right: 10px; width: 50px; height: 50px; font-size: 1.2em; }
+      .cart-count { top: -3px; right: -3px; width: 16px; height: 16px; font-size: 0.8em; }
+    }
+    @media (min-width: 769px) {
+      .main-content { margin-left: 60px; }
+      .sidebar { left: 0; width: 60px; }
+      .sidebar:hover { width: 200px; }
+      .menu-toggle { display: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="sidebar">
+    <ul>
+      <li><a href="#home" onclick="showSection('all')"><i class="fas fa-home"></i><span>Home</span></a></li>
+      <li><a href="#racao" onclick="showSection('racao')"><i class="fas fa-paw"></i><span>Ração</span></a></li>
+      <li><a href="#higiene" onclick="showSection('higiene')"><i class="fas fa-shower"></i><span>Higiene</span></a></li>
+      <li><a href="#acessorios" onclick="showSection('acessorios')"><i class="fas fa-gift"></i><span>Acessórios</span></a></li>
+      <li><a href="#contato" onclick="showSection('contato')"><i class="fas fa-envelope"></i><span>Contato</span></a></li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <header>
+      <h1>LSA Pet Shopping</h1>
+      <button class="menu-toggle" onclick="toggleMenu()"><i class="fas fa-bars"></i></button>
+    </header>
+
+    <div class="intro">
+      <p>Bem-vindo à LSA Pet Shopping! Tudo para o seu pet em um só lugar: rações, higiene, acessórios e mais!</p>
+    </div>
+
+    <div id="racao" class="section">
+      <h2>Ração</h2>
+      <div class="products-grid">
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Ração+Premium+Cachorro" alt="Ração Premium para Cachorro 10kg">
+          <p>Ração Premium para Cachorro</p>
+          <p><strong>R$ 89,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Ração Premium para Cachorro', 89.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Ração+Gato+Sênior" alt="Ração para Gato Sênior 7kg">
+          <p>Ração para Gato Sênior</p>
+          <p><strong>R$ 79,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Ração para Gato Sênior', 79.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Ração+Cachorro+Filhote" alt="Ração para Cachorro Filhote 12kg">
+          <p>Ração para Cachorro Filhote</p>
+          <p><strong>R$ 99,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Ração para Cachorro Filhote', 99.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Ração+Gato+Castrado" alt="Ração para Gato Castrado 5kg">
+          <p>Ração para Gato Castrado</p>
+          <p><strong>R$ 69,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Ração para Gato Castrado', 69.99)">Adicionar ao Carrinho</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="higiene" class="section">
+      <h2>Higiene</h2>
+      <div class="products-grid">
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Shampoo+Antipulgas" alt="Shampoo Pet Antipulgas 500ml">
+          <p>Shampoo Pet Antipulgas</p>
+          <p><strong>R$ 29,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Shampoo Pet Antipulgas', 29.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Lenço+Umedecido" alt="Lenço Umedecido Pet 50 unidades">
+          <p>Lenço Umedecido Pet</p>
+          <p><strong>R$ 14,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Lenço Umedecido Pet', 14.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Sabonete+Pet" alt="Sabonete Pet Hidratante 100g">
+          <p>Sabonete Pet Hidratante</p>
+          <p><strong>R$ 9,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Sabonete Pet Hidratante', 9.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Tapete+Higiênico" alt="Tapete Higiênico Pet 30 unidades">
+          <p>Tapete Higiênico Pet</p>
+          <p><strong>R$ 49,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Tapete Higiênico Pet', 49.99)">Adicionar ao Carrinho</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="acessorios" class="section">
+      <h2>Acessórios</h2>
+      <div class="products-grid">
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Coleira+Ajustável" alt="Coleira Ajustável para Cachorro">
+          <p>Coleira Ajustável</p>
+          <p><strong>R$ 19,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Coleira Ajustável', 19.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Brinquedo+Mordedor" alt="Brinquedo Mordedor para Cachorro">
+          <p>Brinquedo Mordedor</p>
+          <p><strong>R$ 12,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Brinquedo Mordedor', 12.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Cama+Pet" alt="Cama Pet Confortável">
+          <p>Cama Pet Confortável</p>
+          <p><strong>R$ 59,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Cama Pet Confortável', 59.99)">Adicionar ao Carrinho</button>
+        </div>
+        <div class="product-card">
+          <img src="https://placehold.co/250x250?text=Comedouro" alt="Comedouro Inox 500ml">
+          <p>Comedouro Inox</p>
+          <p><strong>R$ 24,99</strong></p>
+          <button class="add-to-cart" onclick="addToCart('Comedouro Inox', 24.99)">Adicionar ao Carrinho</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="contato" class="section">
+      <h2>Contato</h2>
+      <p>Entre em contato para mais informações:</p>
+      <p>WhatsApp: <a href="https://wa.me/5561981105022">+55 61 9 8110-5022</a></p>
+      <p>Email: <a href="mailto:origemdetudolsa@gmail.com">origemdetudolsa@gmail.com</a></p>
+    </div>
+
+    <div id="cart-icon">
+      🛒
+      <span id="cart-count">0</span>
+    </div>
+    <div id="cart-modal">
+      <div id="cart-items"></div>
+      <select id="payment-method">
+        <option value="dinheiro">Dinheiro</option>
+        <option value="cartao">Cartão</option>
+        <option value="pix">Pix</option>
+      </select>
+      <button id="checkout-btn" onclick="sendToWhatsApp()">Finalizar Pedido</button>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 LSA Pet Shopping - Todos os direitos reservados.</p>
+  </footer>
+
+  <script>
+    let cart = [];
+
+    function showSection(sectionId) {
+      const sections = document.querySelectorAll('.section');
+      sections.forEach(section => {
+        section.classList.add('hidden');
+      });
+      if (sectionId === 'all') {
+        sections.forEach(section => {
+          section.classList.remove('hidden');
+        });
+      } else {
+        document.getElementById(sectionId).classList.remove('hidden');
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      if (window.innerWidth <= 768) {
+        toggleMenu();
+      }
+    }
+
+    function addToCart(productName, price) {
+      cart.push({ name: productName, price: price });
+      alert(`${productName} adicionado ao carrinho!`);
+      updateCartCount();
+      updateCartDisplay();
+    }
+
+    function removeFromCart(index) {
+      cart.splice(index, 1);
+      updateCartCount();
+      updateCartDisplay();
+    }
+
+    function toggleCart() {
+      const modal = document.getElementById('cart-modal');
+      modal.classList.toggle('active');
+      updateCartDisplay();
+    }
+
+    function updateCartCount() {
+      const cartCount = document.getElementById('cart-count');
+      cartCount.textContent = cart.length;
+    }
+
+    function updateCartDisplay() {
+      const cartItems = document.getElementById('cart-items');
+      cartItems.innerHTML = '';
+      if (cart.length === 0) {
+        cartItems.innerHTML = '<p>Carrinho vazio.</p>';
+        return;
+      }
+      cart.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <span>${item.name} - R$ ${item.price.toFixed(2)}</span>
+          <button class="remove-from-cart" onclick="removeFromCart(${index})">Remover</button>
+        `;
+        cartItems.appendChild(div);
+      });
+    }
+
+    function sendToWhatsApp() {
+      if (cart.length === 0) {
+        alert('Seu carrinho está vazio! Adicione produtos antes de finalizar.');
+        return;
+      }
+      const paymentMethod = document.getElementById('payment-method').value;
+      let total = cart.reduce((sum, item) => sum + item.price, 0);
+      let message = `Olá! Quero fazer um pedido:\n\nItens no carrinho:\n${cart.map(item => `${item.name} - R$ ${item.price.toFixed(2)}`).join('\n')}\n\nTotal: R$ ${total.toFixed(2)}\nForma de pagamento: ${paymentMethod}\nPor favor, confirme!`;
+      const whatsappUrl = `https://wa.me/5561981105022?text=${encodeURIComponent(message).replace(/%20/g, '+')}`;
+      window.open(whatsappUrl, '_blank');
+      cart = [];
+      updateCartCount();
+      document.getElementById('cart-modal').classList.remove('active');
+    }
+
+    function toggleMenu() {
+      const sidebar = document.querySelector('.sidebar');
+      const mainContent = document.querySelector('.main-content');
+      sidebar.classList.toggle('active');
+      mainContent.classList.toggle('shifted');
+    }
+
+    // Fechar carrinho ao clicar fora
+    document.addEventListener('click', function(event) {
+      const modal = document.getElementById('cart-modal');
+      const cartIcon = document.getElementById('cart-icon');
+      if (modal.classList.contains('active') && !cartIcon.contains(event.target) && !modal.contains(event.target)) {
+        modal.classList.remove('active');
+      }
+    });
+
+    // Ativa o carrinho ao clicar no ícone
+    document.getElementById('cart-icon').addEventListener('click', toggleCart);
+
+    // Carrega todas as seções ao iniciar
+    showSection('all');
+    updateCartCount();
+  </script>
+</body>
+</html>
